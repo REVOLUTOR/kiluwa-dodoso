@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dodoso la Biashara | Kiluwa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ MIPANGILIO (CONFIG) ============ */
+:root{
+  --bg:#F1F3EE; --surface:#FFFFFF; --ink:#1D2A35; --muted:#5D6B74; --line:#D9DED6;
+  --leaf:#2F6B4F; --leaf-soft:#E3EFE8; --maize:#E9A923; --maize-soft:#FBF0D6; --warn:#B4541E;
+  --head:#22413A; --head-ink:#F4F7F2;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121815; --surface:#1B2420; --ink:#E7ECE8; --muted:#A3B0A9; --line:#2E3A35;
+    --leaf:#5DB389; --leaf-soft:#1F3A2D; --maize:#F0B83C; --maize-soft:#3A2F15; --warn:#E8895A;
+    --head:#16241F; --head-ink:#EEF3EF; color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--maize);outline-offset:2px}
+
+header{background:var(--head);color:var(--head-ink);padding:20px 16px 14px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:1.45rem;line-height:1.2;margin:0 0 4px;font-weight:700}
+.sub{margin:0;opacity:.85;font-size:.95rem}
+.count{margin:14px 0 6px;font-size:.95rem}
+.count b{font-size:1.15rem}
+.grains{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.grain{width:14px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:transparent;padding:0;cursor:pointer}
+.grain.on{background:var(--maize);border-color:var(--maize)}
+.savestate{margin-top:10px;font-size:.88rem;min-height:1.3em;opacity:.95}
+.savestate.bad{color:#FFC9A8}
+
+nav.tabs{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;overflow-x:auto;gap:4px;padding:8px 12px}
+.tab{flex:0 0 auto;border:0;background:transparent;padding:8px 12px;border-radius:10px;cursor:pointer;min-height:44px;text-align:left}
+.tab .l{font-weight:700;display:block;line-height:1.1}
+.tab .c{font-size:.75rem;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--maize-soft)}
+.tab.done .c{color:var(--leaf);font-weight:600}
+
+main{padding:20px 14px 60px}
+.sectitle{font-size:1.25rem;margin:0 0 4px}
+.sechint{margin:0 0 18px;color:var(--muted);font-size:.95rem}
+.banner{background:var(--maize-soft);border:1px solid var(--maize);border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:.92rem}
+
+.q{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;scroll-margin-top:80px}
+.q.answered{border-left:5px solid var(--leaf)}
+.qhead{display:flex;gap:10px;align-items:flex-start}
+.qn{flex:0 0 auto;font-weight:700;color:var(--leaf);min-width:1.8em}
+.qt{margin:0;font-weight:500}
+.st{display:block;font-size:.8rem;color:var(--muted);margin:6px 0 0 calc(1.8em + 10px);min-height:1.2em}
+.st.ok{color:var(--leaf)}
+.st.bad{color:var(--warn)}
+.body{margin:12px 0 0 calc(1.8em + 10px)}
+@media (max-width:480px){.body,.st{margin-left:0}}
+
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 16px;min-height:44px;cursor:pointer}
+.opt[aria-checked="true"],.opt[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.multi .opt[aria-pressed="true"]::before{content:"✓ "}
+select,input[type=text],input[type=number],textarea{width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:11px 12px;min-height:46px}
+textarea{min-height:90px;resize:vertical}
+.note{margin-top:12px}
+.note label{display:block;font-size:.88rem;color:var(--muted);margin-bottom:4px}
+.note textarea{min-height:60px}
+
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-bottom:6px}
+.rank .pos{font-weight:700;color:var(--leaf);width:1.4em;text-align:center}
+.rank .txt{flex:1}
+.rank button{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:44px;height:40px;cursor:pointer}
+.rank button:disabled{opacity:.3;cursor:default}
+.confirm{margin-top:8px}
+
+.navbtns{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.btn{border:0;border-radius:12px;padding:12px 18px;min-height:48px;cursor:pointer;font-weight:600}
+.btn.pri{background:var(--leaf);color:#fff}
+.btn.sec{background:var(--surface);border:1.5px solid var(--line)}
+.endnote{background:var(--leaf-soft);border-radius:14px;padding:16px;margin-top:18px}
+.endnote p{margin:0}
+@media (prefers-reduced-motion:no-preference){.q{transition:border-color .2s}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Dodoso la Biashara</h1>
+    <p class="sub" id="greet">Karibu Ndugu Kiluwa. Kila jibu linahifadhiwa papo hapo, unaweza kuendelea wakati wowote.</p>
+    <p class="count"><b id="done">0</b> kati ya <span id="total">50</span> yamejibiwa</p>
+    <ol class="grains" id="grains" aria-label="Maswali yote"></ol>
+    <div class="savestate" id="savestate" role="status" aria-live="polite"></div>
+  </div>
+</header>
+<nav class="tabs" aria-label="Sehemu"><div class="wrap" id="tabs" role="tablist"></div></nav>
+<main><div class="wrap" id="main"></div></main>
+
+<script>
+/* ================= MIPANGILIO =================
+   Weka hapa URL ya Google Apps Script Web App (inaishia na /exec). */
+const CONFIG = {
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwhmx-Dv2sG4FTlOdtg185NtF1O0xMAXxwiJNjKIhb1I-MMKggu6NH9u-lRF5v59T0c/exec",
+  DEFAULT_ID: "kiluwa"
+};
+
+const SECTIONS = [
+  {id:"A", title:"Biashara kwa ujumla"},
+  {id:"B", title:"Bidhaa na vipimo"},
+  {id:"C", title:"Mzigo (stoo) na wasambazaji"},
+  {id:"D", title:"Mauzo, wateja na malipo"},
+  {id:"E", title:"Fedha, matumizi na ripoti"},
+  {id:"F", title:"Wafanyakazi na usalama"},
+  {id:"G", title:"Vifaa, mtandao, bajeti na vipaumbele"}
+];
+const YN = ["Ndiyo","Hapana"];
+
+/* t: single | multi | select | text | textarea | number | rank ; note = swali dogo la maelezo */
+const QUESTIONS = [
+  {n:1,s:"A",t:"number",q:"Una maduka mangapi kwa sasa?",note:"Kila duka liko wapi? (mfano Kiluvya, Mbezi, Kibaha)"},
+  {n:2,s:"A",t:"single",q:"Je, maduka yote yanauza bidhaa zile zile?",o:["Ndiyo, zile zile","Hapana, kila duka lina zake","Zinafanana kwa sehemu"]},
+  {n:3,s:"A",t:"single",q:"Kuna stoo (ghala) kuu inayosambaza maduka?",o:["Ndiyo, stoo kuu inasambaza","Hapana, kila duka linanunua mzigo wake","Vyote viwili"]},
+  {n:4,s:"A",t:"single",q:"Unauza kwa jumla au kwa rejareja?",o:["Jumla tu","Rejareja tu","Vyote viwili"],note:"Takriban asilimia ngapi ni jumla?"},
+  {n:5,s:"A",t:"textarea",q:"Kila duka lina wafanyakazi wangapi, na kazi zao ni zipi (muuzaji, mtunza stoo, msimamizi, dereva)?"},
+  {n:6,s:"A",t:"multi",q:"Kwa sasa mnatunzaje kumbukumbu za biashara?",o:["Daftari","Excel","App ya simu","Mfumo mwingine","Kichwani / hatuandiki"],note:"Kama ni app au mfumo mwingine, unaitwaje?"},
+  {n:7,s:"A",t:"textarea",q:"Ni tatizo gani kubwa zaidi kwenye biashara leo, ambalo ungependa mfumo utatue kwanza?"},
+  {n:8,s:"A",t:"single",q:"Unapanga kufungua maduka mengine ndani ya miaka 2 ijayo?",o:["Ndiyo","Hapana","Bado sijaamua"],note:"Kama ndiyo, mangapi?"},
+
+  {n:9,s:"B",t:"multi",q:"Unauza bidhaa zipi kuu?",o:["Mchele","Maharage","Unga wa sembe","Unga wa ngano","Mafuta ya kupikia","Sukari","Mahindi","Dengu / choroko","Chumvi","Sabuni","Vinywaji"],note:"Bidhaa nyingine, na takriban una aina ngapi kwa jumla?"},
+  {n:10,s:"B",t:"single",q:"Bidhaa moja huja kwa aina au saizi tofauti? (mfano mchele Kyela na Super; mafuta lita 1, 5, 20)",o:YN,note:"Toa mifano michache"},
+  {n:11,s:"B",t:"multi",q:"Unauza kwa vipimo gani?",o:["Kilo","Debe","Gunia","Kikombe / kopo","Pakiti","Lita","Ndoo / dumu"],note:"Gunia ni la kilo ngapi? (25, 50, 100)"},
+  {n:12,s:"B",t:"single",q:"Je, unanunua gunia zima kisha unauza kidogo kidogo kwa kilo?",o:YN,note:"Unapimaje kilichopungua (upotevu, mchanga, unyevu)?"},
+  {n:13,s:"B",t:"single",q:"Mnafungasha upya bidhaa wenyewe (mfano sukari kwenye mifuko ya kilo 1)?",o:YN,note:"Bidhaa zipi?"},
+  {n:14,s:"B",t:"select",q:"Bei ya kuuza hubadilika mara ngapi?",o:["Kila siku","Kila wiki","Kila mwezi","Msimu wa mavuno tu","Haibadiliki mara nyingi"],note:"Nani huweka bei?"},
+  {n:15,s:"B",t:"single",q:"Je, bei ni moja kwa maduka yote?",o:["Ndiyo, bei moja","Hapana, inatofautiana kwa duka"]},
+  {n:16,s:"B",t:"single",q:"Kuna bidhaa zinazoharibika au zenye tarehe ya mwisho (expiry) zinazohitaji kufuatiliwa?",o:YN,note:"Zipi?"},
+
+  {n:17,s:"C",t:"multi",q:"Unanunua mzigo kutoka wapi?",o:["Wakulima moja kwa moja","Masoko (Kariakoo, Tandale n.k.)","Viwanda","Mawakala / wasambazaji"],note:"Una wasambazaji wangapi wa kudumu?"},
+  {n:18,s:"C",t:"single",q:"Unawalipa wasambazaji vipi?",o:["Papo hapo","Wananikopesha, nalipa baadaye","Vyote viwili"]},
+  {n:19,s:"C",t:"textarea",q:"Mzigo ukifika, nani anaupokea na anahakikishaje idadi na uzito ni sahihi?"},
+  {n:20,s:"C",t:"single",q:"Mnahamisha mzigo kati ya maduka au kutoka stoo kwenda dukani?",o:["Ndiyo, mara kwa mara","Mara chache","Hapana"],note:"Nani anaruhusu uhamisho?"},
+  {n:21,s:"C",t:"select",q:"Mnahesabu mzigo uliopo (stock taking) mara ngapi?",o:["Kila siku","Kila wiki","Kila mwezi","Mara chache","Hatuhesabu"],note:"Huwa kuna tofauti kati ya hesabu na kilichopo kweli?"},
+  {n:22,s:"C",t:"single",q:"Ungependa mfumo ukutumie taarifa mzigo ukikaribia kuisha?",o:["Ndiyo, kwa SMS","Ndiyo, kwa WhatsApp","Ndiyo, ndani ya mfumo tu","Hapana"]},
+  {n:23,s:"C",t:"single",q:"Je, huwa unanunua mzigo mwingi wakati wa mavuno na kuuhifadhi kwa muda mrefu?",o:YN,note:"Bidhaa zipi, na kwa muda gani?"},
+
+  {n:24,s:"D",t:"select",q:"Kwa siku ya kawaida, duka moja huwa na wateja takriban wangapi?",o:["Chini ya 20","20 hadi 50","50 hadi 100","100 hadi 200","Zaidi ya 200"]},
+  {n:25,s:"D",t:"multi",q:"Wateja hulipa kwa njia gani?",o:["Taslimu","M-Pesa","Mixx by Yas (Tigo Pesa)","Airtel Money","HaloPesa","Lipa Namba","Benki / kadi"],note:"Ipi inatumika zaidi?"},
+  {n:26,s:"D",t:"single",q:"Unawakopesha wateja (mali kauli)?",o:YN,note:"Ni wateja wangapi, na mnafuatiliaje madeni yao sasa?"},
+  {n:27,s:"D",t:"single",q:"Una wateja wa kudumu wa jumla (mama lishe, hoteli, shule, maduka madogo) unaotaka kuwatunzia kumbukumbu?",o:YN,note:"Takriban wangapi?"},
+  {n:28,s:"D",t:"single",q:"Mashine ya EFD ya TRA",o:["Natumia EFD, nataka iunganishwe na mfumo","Natumia EFD, haina haja ya kuunganisha","Situmii EFD"],note:"Mnatoa risiti kwa wateja kwa njia gani?"},
+  {n:29,s:"D",t:"single",q:"Kuna punguzo (discount) au bei maalum kwa wateja fulani au wanaonunua kwa wingi?",o:YN,note:"Inafanyaje kazi?"},
+  {n:30,s:"D",t:"single",q:"Mnapokea oda kwa simu au WhatsApp?",o:["Ndiyo, na tunapeleka mzigo (delivery)","Ndiyo, mteja anakuja kuchukua","Hapana"]},
+  {n:31,s:"D",t:"textarea",q:"Mteja akirudisha bidhaa, huwa mnafanyaje?"},
+
+  {n:32,s:"E",t:"textarea",q:"Mwisho wa siku, muuzaji anakabidhije fedha (taslimu na za simu), na kwa nani?"},
+  {n:33,s:"E",t:"multi",q:"Ni matumizi gani hulipwa kutoka dukani?",o:["Usafiri","Kodi ya pango","Umeme","Maji","Mishahara","Ushuru / leseni","Chakula cha wafanyakazi"],note:"Mengine?"},
+  {n:34,s:"E",t:"textarea",q:"Kwa sasa unajuaje kama duka fulani linapata faida au hasara?"},
+  {n:35,s:"E",t:"multi",q:"Ni taarifa gani ungependa kuona kwenye simu yako kila siku?",o:["Mauzo ya leo kwa kila duka","Faida","Fedha zilizopo","Madeni ya wateja","Madeni kwa wasambazaji","Mzigo unaoisha","Matumizi"]},
+  {n:36,s:"E",t:"single",q:"Unahitaji ripoti za kodi au za benki (mfano kwa mkopo) ambazo mfumo uziandae?",o:YN,note:"Ripoti zipi?"},
+  {n:37,s:"E",t:"single",q:"Mfumo na ripoti ziwe kwa lugha gani?",o:["Kiswahili","Kiingereza","Vyote viwili"]},
+
+  {n:38,s:"F",t:"multi",q:"Nani atatumia mfumo?",o:["Mimi mwenyewe","Wasimamizi","Wauzaji","Mhasibu","Mtunza stoo"],note:"Watu wangapi kwa jumla?"},
+  {n:39,s:"F",t:"multi",q:"Ni mambo gani muuzaji HARUHUSIWI kufanya au kuona?",o:["Kuona faida","Kubadilisha bei","Kufuta mauzo","Kuona maduka mengine","Kutoa punguzo","Kukopesha wateja"]},
+  {n:40,s:"F",t:"single",q:"Umewahi kupata tatizo la upotevu wa mzigo au fedha?",o:YN,note:"Ungependa mfumo uonyeshe nani alifanya nini na lini?"},
+  {n:41,s:"F",t:"multi",q:"Ungependa mfumo ufuatilie mambo gani ya wafanyakazi?",o:["Mahudhurio","Mishahara","Mikopo / advance","Sihitaji"]},
+  {n:42,s:"F",t:"single",q:"Wafanyakazi wako wanaweza kutumia simu janja au kompyuta kwa urahisi?",o:["Ndiyo, wote","Baadhi yao","Hapana"]},
+
+  {n:43,s:"G",t:"multi",q:"Maduka yana vifaa gani sasa?",o:["Kompyuta","Simu janja","Printa ya risiti","Barcode scanner","Mizani ya kidijitali","Hakuna kati ya hivi"]},
+  {n:44,s:"G",t:"single",q:"Mtandao (internet) na umeme vinapatikana madukani?",o:["Muda wote","Vinakatika mara kwa mara","Havipatikani"],note:"Maduka yapi yana changamoto?"},
+  {n:45,s:"G",t:"single",q:"Ungependa mfumo uwe wa aina gani?",o:["App ya simu","Tovuti (website)","Programu ya kompyuta","Mchanganyiko"]},
+  {n:46,s:"G",t:"single",q:"Umewahi kutumia mfumo mwingine wa biashara?",o:YN,note:"Ulipenda nini na hukupenda nini?"},
+  {n:47,s:"G",t:"textarea",q:"Una bajeti gani takriban kwa ujenzi wa mfumo, na kwa gharama za kila mwezi (mtandao, hosting, matengenezo)?"},
+  {n:48,s:"G",t:"select",q:"Ungependa mfumo uanze kufanya kazi lini?",o:["Ndani ya mwezi 1","Miezi 1 hadi 3","Miezi 3 hadi 6","Hakuna haraka"],note:"Uko tayari tuanze na duka moja kwanza kama majaribio?"},
+  {n:49,s:"G",t:"rank",q:"Panga mambo haya kwa umuhimu (juu = muhimu zaidi). Tumia vishale, kisha bonyeza \u201cHifadhi mpangilio\u201d.",o:["Kufuatilia mzigo","Kurekodi mauzo","Madeni ya wateja","Ripoti za faida","Kudhibiti wafanyakazi","Kuwasiliana na wasambazaji"]},
+  {n:50,s:"G",t:"textarea",q:"Kuna jambo lingine lolote ungependa nijue kuhusu biashara yako?"}
+];
+
+/* ================= HALI (STATE) ================= */
+const params = new URLSearchParams(location.search);
+const RID = (params.get("id") || CONFIG.DEFAULT_ID).replace(/[^\w-]/g,"").slice(0,40) || "kiluwa";
+const LS_A = "dodoso:"+RID+":answers", LS_P = "dodoso:"+RID+":pending";
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+let answers = store.get(LS_A,{});
+let pending = store.get(LS_P,{});
+let current = "A";
+const timers = {};
+let flushing = false, again = false, retryTimer = null;
+const byN = Object.fromEntries(QUESTIONS.map(q=>[q.n,q]));
+
+function isAnswered(n){
+  const a=answers[n]; if(!a) return false;
+  const v=a.v;
+  if(Array.isArray(v) && v.length) return byN[n].t!=="rank" || a.confirmed;
+  if(typeof v==="string" && v.trim()) return true;
+  return !!(a.note && a.note.trim());
+}
+function readable(n){
+  const q=byN[n], a=answers[n]||{}; let t="";
+  if(q.t==="rank" && Array.isArray(a.v)) t=a.v.map((x,i)=>(i+1)+". "+x).join("; ");
+  else if(Array.isArray(a.v)) t=a.v.join(", ");
+  else t=(a.v||"").trim();
+  if(a.note && a.note.trim()) t += (t?" | ":"") + "Maelezo: " + a.note.trim();
+  return t;
+}
+
+/* ================= KUHIFADHI (SAVING) ================= */
+function setAnswer(n, patch, delay){
+  answers[n] = Object.assign({}, answers[n]||{}, patch);
+  store.set(LS_A, answers);
+  refreshCard(n); refreshProgress();
+  clearTimeout(timers[n]);
+  setStatus(n, delay ? "" : "saving");
+  timers[n] = setTimeout(()=>enqueue(n), delay||0);
+}
+function enqueue(n){
+  const q=byN[n];
+  pending[n] = {key:n, section:q.s, question:q.q, text:readable(n), answer:answers[n], ts:Date.now()};
+  store.set(LS_P, pending);
+  setStatus(n,"saving");
+  flush();
+}
+async function flush(){
+  if(!CONFIG.SCRIPT_URL){ Object.keys(pending).forEach(k=>setStatus(+k,"local")); globalState(); return; }
+  if(flushing){ again=true; return; }
+  const items = Object.values(pending);
+  if(!items.length){ globalState(); return; }
+  flushing=true; globalState("saving");
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({id:RID,items})});
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error||"save failed");
+    items.forEach(it=>{
+      if(pending[it.key] && pending[it.key].ts===it.ts){ delete pending[it.key]; setStatus(it.key,"ok"); }
+    });
+    store.set(LS_P,pending);
+  }catch(e){
+    items.forEach(it=>setStatus(it.key,"retry"));
+    clearTimeout(retryTimer); retryTimer=setTimeout(flush,15000);
+  }finally{
+    flushing=false;
+    if(again){ again=false; flush(); } else globalState();
+  }
+}
+window.addEventListener("online", flush);
+
+async function loadRemote(){
+  if(!CONFIG.SCRIPT_URL) return;
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL+"?id="+encodeURIComponent(RID));
+    const data = await res.json();
+    if(!data.ok || !data.answers) return;
+    Object.entries(data.answers).forEach(([k,v])=>{ if(!pending[k]) answers[k]=v; });
+    store.set(LS_A,answers);
+    const ae=document.activeElement;
+    if(!ae || ae===document.body) renderSection(current,false);
+    refreshProgress();
+  }catch(e){}
+  flush();
+}
+
+/* ================= UI ================= */
+const $ = s=>document.querySelector(s);
+const el = (tag,attrs,...kids)=>{
+  const e=document.createElement(tag);
+  if(attrs) for(const [k,v] of Object.entries(attrs)){
+    if(k==="class") e.className=v; else if(k==="text") e.textContent=v;
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2),v); else e.setAttribute(k,v);
+  }
+  kids.forEach(c=>c && e.appendChild(c)); return e;
+};
+
+const STATUS = {
+  saving:["Inahifadhi\u2026",""], ok:["Imehifadhiwa \u2713","ok"],
+  retry:["Hakuna mtandao. Jibu limehifadhiwa kwenye kifaa hiki, litatumwa mtandao ukirudi.","bad"],
+  local:["Limehifadhiwa kwenye kifaa hiki tu (mfumo wa kutuma bado haujaunganishwa).","bad"], "":["",""]
+};
+function setStatus(n,s){
+  const e=document.getElementById("st-"+n); if(!e) return;
+  const [txt,cls]=STATUS[s]||STATUS[""]; e.textContent=txt; e.className="st "+cls;
+}
+function globalState(mode){
+  const box=$("#savestate"), p=Object.keys(pending).length;
+  box.classList.remove("bad");
+  if(mode==="saving") box.textContent="Inahifadhi majibu\u2026";
+  else if(!CONFIG.SCRIPT_URL){ box.textContent="Hali ya majaribio: majibu yanahifadhiwa kwenye kifaa hiki tu."; box.classList.add("bad"); }
+  else if(p){ box.textContent=p+" jibu (majibu) yanasubiri mtandao. Yatatumwa yenyewe."; box.classList.add("bad"); }
+  else box.textContent="Majibu yote yamehifadhiwa.";
+}
+
+function buildTabs(){
+  const t=$("#tabs"); t.innerHTML="";
+  SECTIONS.forEach(s=>{
+    t.appendChild(el("button",{class:"tab",role:"tab",id:"tab-"+s.id,"aria-selected":String(s.id===current),onclick:()=>renderSection(s.id,true)},
+      el("span",{class:"l",text:s.id}), el("span",{class:"c",id:"tc-"+s.id})));
+  });
+}
+function buildGrains(){
+  const g=$("#grains"); g.innerHTML="";
+  QUESTIONS.forEach(q=>{
+    g.appendChild(el("li",null, el("button",{class:"grain",id:"gr-"+q.n,title:"Swali "+q.n,"aria-label":"Nenda swali "+q.n,onclick:()=>jump(q.n)})));
+  });
+}
+function refreshProgress(){
+  let done=0;
+  QUESTIONS.forEach(q=>{ const on=isAnswered(q.n); if(on) done++; const g=document.getElementById("gr-"+q.n); if(g) g.classList.toggle("on",on); });
+  $("#done").textContent=done; $("#total").textContent=QUESTIONS.length;
+  SECTIONS.forEach(s=>{
+    const qs=QUESTIONS.filter(q=>q.s===s.id), d=qs.filter(q=>isAnswered(q.n)).length;
+    const c=document.getElementById("tc-"+s.id); if(c) c.textContent=d+"/"+qs.length;
+    const tb=document.getElementById("tab-"+s.id); if(tb) tb.classList.toggle("done",d===qs.length);
+  });
+}
+function refreshCard(n){ const c=document.getElementById("q-"+n); if(c) c.classList.toggle("answered",isAnswered(n)); }
+function jump(n){
+  const q=byN[n]; if(q.s!==current) renderSection(q.s,false);
+  const c=document.getElementById("q-"+n); if(c){ c.scrollIntoView({behavior:"smooth",block:"start"}); }
+}
+
+function renderSection(id, scrollTop){
+  current=id;
+  SECTIONS.forEach(s=>{ const t=document.getElementById("tab-"+s.id); if(t) t.setAttribute("aria-selected",String(s.id===id)); });
+  const sec=SECTIONS.find(s=>s.id===id), idx=SECTIONS.indexOf(sec);
+  const m=$("#main"); m.innerHTML="";
+  if(!CONFIG.SCRIPT_URL && idx===0){
+    m.appendChild(el("div",{class:"banner",text:"Kumbuka (kwa mtengenezaji): weka SCRIPT_URL kwenye msimbo ili majibu yatumwe kwenye Google Sheet."}));
+  }
+  m.appendChild(el("h2",{class:"sectitle",text:sec.id+". "+sec.title}));
+  m.appendChild(el("p",{class:"sechint",text:"Jibu unachoweza. Swali lisilokuhusu liruke tu."}));
+  QUESTIONS.filter(q=>q.s===id).forEach(q=>m.appendChild(card(q)));
+  const nav=el("div",{class:"navbtns"});
+  nav.appendChild(idx>0 ? el("button",{class:"btn sec",text:"Sehemu iliyopita",onclick:()=>renderSection(SECTIONS[idx-1].id,true)}) : el("span"));
+  if(idx<SECTIONS.length-1) nav.appendChild(el("button",{class:"btn pri",text:"Sehemu inayofuata",onclick:()=>renderSection(SECTIONS[idx+1].id,true)}));
+  m.appendChild(nav);
+  if(idx===SECTIONS.length-1){
+    m.appendChild(el("div",{class:"endnote"},el("p",{text:"Asante sana Ndugu Kiluwa. Kila jibu ulilotoa limeshahifadhiwa, hakuna haja ya kubonyeza \u201ctuma\u201d. Unaweza kufunga ukurasa na kurudi wakati wowote kumalizia yaliyobaki."})));
+  }
+  if(scrollTop) window.scrollTo({top:0,behavior:"smooth"});
+  refreshProgress();
+}
+
+function card(q){
+  const a=answers[q.n]||{};
+  const c=el("section",{class:"q"+(isAnswered(q.n)?" answered":""),id:"q-"+q.n,"aria-labelledby":"qt-"+q.n});
+  c.appendChild(el("div",{class:"qhead"}, el("span",{class:"qn",text:q.n+"."}), el("p",{class:"qt",id:"qt-"+q.n,text:q.q})));
+  c.appendChild(el("span",{class:"st",id:"st-"+q.n}));
+  const b=el("div",{class:"body"});
+
+  if(q.t==="single"){
+    const g=el("div",{class:"opts",role:"radiogroup","aria-labelledby":"qt-"+q.n});
+    q.o.forEach(o=>{
+      const btn=el("button",{class:"opt",type:"button",role:"radio","aria-checked":String(a.v===o),text:o,onclick:()=>{
+        const nv=(answers[q.n]||{}).v===o?"":o;
+        g.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-checked",String(x.textContent===nv)));
+        setAnswer(q.n,{v:nv},0);
+      }});
+      g.appendChild(btn);
+    });
+    b.appendChild(g);
+  }
+  else if(q.t==="multi"){
+    const g=el("div",{class:"opts multi",role:"group","aria-labelledby":"qt-"+q.n});
+    const cur=Array.isArray(a.v)?a.v:[];
+    q.o.forEach(o=>{
+      const btn=el("button",{class:"opt",type:"button","aria-pressed":String(cur.includes(o)),text:o,onclick:()=>{
+        const now=Array.isArray((answers[q.n]||{}).v)?[...answers[q.n].v]:[];
+        const i=now.indexOf(o); if(i>=0) now.splice(i,1); else now.push(o);
+        btn.setAttribute("aria-pressed",String(i<0));
+        setAnswer(q.n,{v:q.o.filter(x=>now.includes(x))},900);
+      }});
+      g.appendChild(btn);
+    });
+    b.appendChild(g);
+  }
+  else if(q.t==="select"){
+    const s=el("select",{"aria-labelledby":"qt-"+q.n,onchange:e=>setAnswer(q.n,{v:e.target.value},0)});
+    s.appendChild(el("option",{value:"",text:"Chagua\u2026"}));
+    q.o.forEach(o=>{ const op=el("option",{value:o,text:o}); if(a.v===o) op.selected=true; s.appendChild(op); });
+    b.appendChild(s);
+  }
+  else if(q.t==="number"||q.t==="text"){
+    const i=el("input",{type:q.t==="number"?"number":"text",inputmode:q.t==="number"?"numeric":"text",min:"0","aria-labelledby":"qt-"+q.n,placeholder:q.t==="number"?"Andika namba":"Andika hapa"});
+    i.value=a.v||"";
+    i.addEventListener("input",e=>setAnswer(q.n,{v:e.target.value},1200));
+    i.addEventListener("blur",()=>{ if(timers[q.n]){ clearTimeout(timers[q.n]); if(!pending[q.n]||pending[q.n].text!==readable(q.n)) enqueue(q.n);} });
+    b.appendChild(i);
+  }
+  else if(q.t==="textarea"){
+    const t=el("textarea",{"aria-labelledby":"qt-"+q.n,placeholder:"Andika jibu lako hapa"});
+    t.value=a.v||"";
+    t.addEventListener("input",e=>setAnswer(q.n,{v:e.target.value},1500));
+    t.addEventListener("blur",()=>{ clearTimeout(timers[q.n]); if((answers[q.n]||{}).v!==undefined && (!pending[q.n]||pending[q.n].text!==readable(q.n))) enqueue(q.n); });
+    b.appendChild(t);
+  }
+  else if(q.t==="rank"){
+    let order = Array.isArray(a.v)&&a.v.length===q.o.length ? [...a.v] : [...q.o];
+    const list=el("ol",{class:"rank"});
+    const confirmBtn=el("button",{class:"btn pri confirm",type:"button",text:a.confirmed?"Mpangilio umehifadhiwa \u2713":"Hifadhi mpangilio",onclick:()=>{
+      setAnswer(q.n,{v:[...order],confirmed:true},0); confirmBtn.textContent="Mpangilio umehifadhiwa \u2713";
+    }});
+    const draw=()=>{
+      list.innerHTML="";
+      order.forEach((item,i)=>{
+        const up=el("button",{type:"button","aria-label":"Panda juu: "+item,text:"\u2191",onclick:()=>move(i,-1)});
+        const dn=el("button",{type:"button","aria-label":"Shuka chini: "+item,text:"\u2193",onclick:()=>move(i,1)});
+        if(i===0) up.disabled=true; if(i===order.length-1) dn.disabled=true;
+        list.appendChild(el("li",null, el("span",{class:"pos",text:String(i+1)}), el("span",{class:"txt",text:item}), up, dn));
+      });
+    };
+    const move=(i,d)=>{ const j=i+d; [order[i],order[j]]=[order[j],order[i]]; draw(); confirmBtn.textContent="Hifadhi mpangilio"; const f=list.children[j]&&list.children[j].querySelectorAll("button")[d<0?0:1]; if(f&&!f.disabled) f.focus(); };
+    draw(); b.appendChild(list); b.appendChild(confirmBtn);
+  }
+
+  if(q.note){
+    const id="nt-"+q.n;
+    const t=el("textarea",{id,placeholder:"Si lazima"});
+    t.value=a.note||"";
+    t.addEventListener("input",e=>setAnswer(q.n,{note:e.target.value},1500));
+    t.addEventListener("blur",()=>{ clearTimeout(timers[q.n]); if(!pending[q.n]||pending[q.n].text!==readable(q.n)) { if(answers[q.n]) enqueue(q.n); } });
+    b.appendChild(el("div",{class:"note"}, el("label",{for:id,text:q.note}), t));
+  }
+  c.appendChild(b);
+  return c;
+}
+
+/* ================= KUANZA ================= */
+function firstOpenSection(){
+  const q=QUESTIONS.find(q=>!isAnswered(q.n)); return q?q.s:"A";
+}
+buildTabs(); buildGrains();
+current=firstOpenSection();
+renderSection(current,false);
+globalState();
+loadRemote();
+setInterval(()=>{ if(Object.keys(pending).length) flush(); }, 30000);
+</script>
+</body>
+</html>
